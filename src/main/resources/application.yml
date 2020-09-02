@@ -5,6 +5,17 @@ server:
     context-path: /api/
 
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 1
+    timeout: 5000ms
+    jedis:
+      pool:
+        min-idle: 1
+        max-idle: 1
+        max-active: 2
+        max-wait: -1ms
   application:
     name: demo2
   datasource:

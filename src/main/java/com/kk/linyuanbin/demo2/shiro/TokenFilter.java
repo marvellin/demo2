@@ -15,10 +15,24 @@ import javax.servlet.http.HttpServletResponse;
 
 //需要认证的API被调用前执行的拦截器
 public class TokenFilter extends AuthenticationFilter {
+    /*@Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return false;
+    }*/
 
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        return false;
+        System.out.println("onAccessDenied done");
+        String token = getToken(servletRequest);
+        if (StringUtils.isEmpty(token)){
+            return false;
+        } else {
+            boolean isSuccess = this.login(token);
+            if(!isSuccess){
+                this.printUnauthorized("401", (HttpServletResponse) servletResponse);
+            }
+            return isSuccess;
+        }
     }
 
     private boolean login(String token){
@@ -32,6 +46,7 @@ public class TokenFilter extends AuthenticationFilter {
     }
 
     private String getToken(ServletRequest servletRequest){
+        System.out.println("enter getToken");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         //获取请求头中的Authorization属性
         String authorizationHeader = request.getHeader("token");

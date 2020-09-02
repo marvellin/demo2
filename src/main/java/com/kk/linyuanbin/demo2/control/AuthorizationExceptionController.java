@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//@Controller
 @Api(tags = "test to catch authorizationException")
 @RequestMapping("/authorizationException")
 public class AuthorizationExceptionController {
 
     @GetMapping("/")
-//    @RequestMapping("/")
     @ApiOperation("get test")
     @ApiImplicitParam(name = "id", value = "标识符", dataType = "Integer", defaultValue = "1")
     public Responser getTest(@RequestParam Integer id){

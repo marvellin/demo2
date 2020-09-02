@@ -1,5 +1,6 @@
 package com.kk.linyuanbin.demo2.shiro;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -7,6 +8,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 //自定义token 实现Authenticationtoken 认证需要用到
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Token implements AuthenticationToken {
     private String token;
 

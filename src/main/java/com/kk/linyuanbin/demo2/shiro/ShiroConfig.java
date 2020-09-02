@@ -30,10 +30,12 @@ public class ShiroConfig {
         setUrl(filterChainDefinitionMapping, "method,auth", AuthUrl());
 
         Map<String, Filter> filterMap = new HashMap<>();
+
         //methodFilter tokenFilter 自定义拦截器
         filterMap.put("method", new MethodFilter());
         filterMap.put("auth", new TokenFilter());
         shiroFilter.setFilters(filterMap);
+        System.out.println("shiroFilter done");
         return shiroFilter;
     }
 
@@ -45,6 +47,7 @@ public class ShiroConfig {
                 filterChainDefinitionMapping.put(url, filterName);
             }
         }
+        System.out.println("seturl done");
     }
 
     //获取可匿名（无认证）访问路劲
@@ -79,11 +82,14 @@ public class ShiroConfig {
         manager.setSessionManager(this.defaultSessionManager());
 
         SecurityUtils.setSecurityManager(manager);
+        System.out.println("securitymanager done");
+        System.out.println(manager.getRealms().iterator().next().getClass());
         return manager;
     }
 
     @Bean("tokenRealm")
     public TokenRealm tokenRealm(){
+        System.out.println("tokenrealm done");
         return new TokenRealm();
     }
 
@@ -92,11 +98,13 @@ public class ShiroConfig {
         DefaultSessionManager manager = new DefaultSessionManager();
         //禁用session
         manager.setSessionValidationSchedulerEnabled(false);
+        System.out.println("defaultsessionmanager done");
         return manager;
     }
 
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+        System.out.println("lifecycleBeanPostProcessor done");
         return new LifecycleBeanPostProcessor();
     }
 
@@ -105,6 +113,7 @@ public class ShiroConfig {
     public AuthorizationAttributeSourceAdvisor advisor(SecurityManager securityManager){
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        System.out.println("advisor done");
         return authorizationAttributeSourceAdvisor;
     }
 
@@ -113,6 +122,7 @@ public class ShiroConfig {
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
         DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
         defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        System.out.println("defaultAdvisorAutoProxyCreator done");
         return defaultAdvisorAutoProxyCreator;
     }
 }
