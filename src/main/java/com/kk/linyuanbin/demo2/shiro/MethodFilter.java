@@ -1,5 +1,6 @@
 package com.kk.linyuanbin.demo2.shiro;
 
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.servlet.AbstractFilter;
 
 import javax.servlet.FilterChain;

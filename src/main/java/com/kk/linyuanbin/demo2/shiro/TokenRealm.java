@@ -20,7 +20,15 @@ import javax.annotation.Resource;
 //自定义域对象 实现认证和授权的方法
 public class TokenRealm extends AuthorizingRealm {
 
-//    @Resource(name = "stringRedisTemplate")
+    public RedisTemplate<String, String> getRedis() {
+        return redis;
+    }
+
+    public StringRedisTemplate getStringRedisTemplate() {
+        return stringRedisTemplate;
+    }
+
+    //    @Resource(name = "stringRedisTemplate")
     @Autowired
     private RedisTemplate<String, String> redis;
 //    private ValueOperations<String, String> redis;
