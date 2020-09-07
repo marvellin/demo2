@@ -12,10 +12,14 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -25,10 +29,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 public class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
-    /*@Autowired
-    private RedisTemplate<String, String> redis;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;*/
+//    @Autowired
+//    @Resource(name = "stringRedisTemplate")
+    private static RedisTemplate<String, String> redis;
+
+//    @Autowired
+//    @Resource
+    private static StringRedisTemplate stringRedisTemplate;
 
     public Subject createSubject(SubjectContext context){
         /*//禁用session
@@ -43,6 +50,8 @@ public class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
         System.out.println("is principle null?" + (result.getPrincipal() == null));
         System.out.println(result.isAuthenticated());
         return result;*/
+//        initRedis();
+
         Subject result;
 
         if (!(context instanceof WebSubjectContext)) {
@@ -83,12 +92,29 @@ public class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
     public PrincipalCollection resolvePrincipals(Token token){
         if (token == null || token.getToken() == null || token.getToken() == "") return null;
         PrincipalCollection collection = new SimplePrincipalCollection();
-        collection.asSet().add(new TokenRealm().getRedis().opsForValue().get("random.token." + token.getToken()));
+        collection.asSet().add(redis.opsForValue().get("random.token." + token.getToken()));
         return collection;
     }
 
     public boolean myResolveAuthenticated(Token token){
         if (null == token || token.getToken() == null || token.getToken() == "") return false;
-        return new TokenRealm().getRedis().opsForValue().get(token.getToken()) == null ? false : true;
+        return redis.opsForValue().get(token.getToken()) == null ? false : true;
+    }
+
+    private void initRedis(){
+        if (redis == null || stringRedisTemplate == null){
+            RedisTemplate<String, String> template = new RedisTemplate<>();
+            RedisConnectionFactory connectionFactory = new JedisConnectionFactory();
+            template.setConnectionFactory(connectionFactory);
+            JdkSerializationRedisSerializer serializer = new JdkSerializationRedisSerializer();
+            template.setValueSerializer(serializer);
+            template.setKeySerializer(new StringRedisSerializer());
+            template.afterPropertiesSet();
+            redis = template;
+
+            StringRedisTemplate stringRedisTemplate1 = new StringRedisTemplate();
+            stringRedisTemplate1.setConnectionFactory(connectionFactory);
+            stringRedisTemplate = stringRedisTemplate1;
+        }
     }
 }
